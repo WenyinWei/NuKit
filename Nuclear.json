@@ -1,0 +1,331 @@
+<span class="togglerspan" id="togglertext">
+ Comments
+</span>
+<span class="toggle-button" onclick="javascript:togglecomments(this)">
+ <button>
+ </button>
+</span>
+<span style="position:relative;top:-25px">
+ <b>
+  <font style="color:red">
+   Click
+  </font>
+  on a column header to open the guide
+ </b>
+</span>
+<span style="position:relative;top:-25px;left:30px">
+ <b>
+  <font style="color:red">
+   Uncertainty
+  </font>
+ </b>
+ for numeric values refers to the last digits of the value:
+ <font style="color:red">
+  <b>
+   12.1
+   <em>
+    23
+   </em>
+   means 12.1 ± 2.3
+  </b>
+ </font>
+</span>
+<div>
+ <span style="float:left;width:150px">
+ </span>
+ <b>
+  Data from:
+ </b>
+ ENSDF apart Q from
+ <span class="ame">
+  AME2016
+ </span>
+ <a href="..">
+  <a class="mylink" href="" onclick="javascript:window.open('guide.html#quantities', 'guide', 'width=850, height=800 toolbar=no,location=no,directories=no,status=no,alwaysRaised,menubar=no,scrollbars=1,resizable=1'); return false;" style="color:green">
+   • Definitions &amp; Sources
+  </a>
+  <br/>
+  <div>
+   <a download="" href="localhost" onclick="javascript:iaea.nds.vchart.getCSV('LD','SYMBOL=RN@@@ZPN=222');return false;">
+    <img id="LDcsv" src="../images/csv.png"/>
+   </a>
+  </div>
+  <table cellpadding="0" cellspacing="0" class="tbl-nucs">
+   <thead>
+    <tr>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       Parent
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       T
+       <sub>
+        1/2
+       </sub>
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       E
+       <sub>
+        x
+       </sub>
+       [keV]
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       Jp
+       <font size="-2">
+        order
+       </font>
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       Decay
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       <span class="ame">
+        Q
+        <sub>
+         decay
+        </sub>
+        <br/>
+        <sup>
+         <a href="guide.html#qval" target="guide">
+          note on Q value
+         </a>
+        </sup>
+       </span>
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       Daughter
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="" rowspan="2">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('dec_sum')">
+       Comments
+      </a>
+     </th>
+     <th colspan="11">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Total energy by radiation type, per 100 decays of the parent [keV]
+      </a>
+     </th>
+    </tr>
+    <tr>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Alpha
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Beta
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       CE &amp; Auger
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       γ &amp; X
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Unplaced γ
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Recoil
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Neutrino
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Absorbed
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Total
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Q * BR
+      </a>
+     </th>
+     <th align="center" class="nuc" nowrap="">
+      <a class="title" href="javascript:iaea.nds.comm.openlcguide('rad_dep')">
+       Delta
+      </a>
+     </th>
+    </tr>
+    <thead>
+     <b>
+      Click
+     </b>
+     on a nuclide symbol to
+     <b>
+      show the decay schema
+     </b>
+     <tbody>
+      <tr valign="top">
+       <td>
+        <table class="n">
+         <tr>
+          <td align="right">
+           <font size="1">
+            222
+            <br/>
+            86
+           </font>
+          </td>
+          <td style="vertical-align:middle">
+           <b>
+            <a href="javascript:showdecay('222Rn')">
+             Rn
+            </a>
+           </b>
+          </td>
+          <td align="left">
+           <font size="1">
+            <br/>
+            136
+           </font>
+          </td>
+         </tr>
+        </table>
+       </td>
+       <td nowrap="">
+        3.8235  d
+        <em>
+         3
+        </em>
+       </td>
+       <td nowrap="">
+        0.0
+       </td>
+       <td nowrap="">
+        0+
+       </td>
+       <td nowrap="">
+        α  100 %
+       </td>
+       <td nowrap="">
+        5590.4
+        <em>
+         3
+        </em>
+       </td>
+       <td>
+        <table class="n">
+         <tr>
+          <td align="right">
+           <font size="1">
+            218
+            <br/>
+            84
+           </font>
+          </td>
+          <td style="vertical-align:middle">
+           <a href="javascript:showdecay('218Po')">
+            Po
+           </a>
+          </td>
+          <td align="left">
+           <font size="1">
+            <br/>
+            134
+           </font>
+          </td>
+         </tr>
+        </table>
+       </td>
+       <td nowrap="">
+       </td>
+       <td nowrap="">
+        5489.002
+        <em>
+         0.300
+        </em>
+       </td>
+       <td nowrap="">
+        0.000
+        <em>
+         0.000
+        </em>
+       </td>
+       <td nowrap="">
+        0.000
+        <em>
+         0.000
+        </em>
+       </td>
+       <td nowrap="">
+        0.388
+        <em>
+         0.002
+        </em>
+       </td>
+       <td nowrap="">
+        0.000
+        <em>
+         0.000
+        </em>
+       </td>
+       <td nowrap="">
+        99.573
+        <em>
+         0.163
+        </em>
+       </td>
+       <td nowrap="">
+        0.000
+        <em>
+         0.000
+        </em>
+       </td>
+       <td nowrap="">
+        5588.962
+        <em>
+         0.341
+        </em>
+       </td>
+       <td nowrap="">
+        5588.962
+        <em>
+         0.341
+        </em>
+       </td>
+       <td nowrap="">
+        5590.4
+       </td>
+       <td nowrap="">
+        1.438
+       </td>
+      </tr>
+     </tbody>
+    </thead>
+   </thead>
+  </table>
+  <br>
+  </br>
+ </a>
+</div>
