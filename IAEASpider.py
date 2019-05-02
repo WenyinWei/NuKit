@@ -2,9 +2,6 @@ import requests
 import csv
 from bs4 import BeautifulSoup
 import os
-import networkx
-import threading
-from queue import Queue
 
 def SaveContents(ulist):
     # The head of table

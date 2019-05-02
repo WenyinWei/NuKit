@@ -6,8 +6,6 @@ from bs4 import BeautifulSoup
 import os
 import multiprocessing
 
-import matplotlib.pyplot as plt
-import networkx as nx
 
 def SaveContents(ulist):
     # The head of table
@@ -191,6 +189,11 @@ if __name__ == '__main__':
 
 
     # Abandoned graph making code
+    # The following code supports a network display with networkx but with some bugs that it can not detect
+    # the same node by labels. What's more, it is too ugly.
+
+    # import matplotlib.pyplot as plt
+    # import networkx as nx
     # G = nx.Graph()
     # for i in AllList:
     #     addingNode = i[3]+'_'+i[0]
