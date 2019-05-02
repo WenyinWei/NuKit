@@ -70,17 +70,19 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
     trs = soup.find_all('tr')
 
     tr_index = 0
+    # Iterate every three row in this table
     for tr in trs[2:]:
         tr_index = tr_index + 1
-        # The html format would require picking the rows every three rows.
-        if tr_index % 3 != 1: continue
+        # if tr_index % 3 != 1: continue ＃　This functionality to screen which line is useful has been proved to be not
+        # powerful as checking the fifth element of the row.
         ui = []
         # print(tr)
-        breakAtLastLoop = False
+        breakRowLoop = False
         td_index = 0;
+        # Iterate every element in this row
         for td in tr:
             td_index = td_index + 1
-            if breakAtLastLoop: break
+            if breakRowLoop: break
             if td_index == 1 or td_index == 7:
                 # print("This is parent element")
                 # print(td)
@@ -119,10 +121,10 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                                     ui.append(int(ThisZ))
                                 elementHead = False
                             else:
-                                breakAtLastLoop = True
+                                breakRowLoop = True
                                 break
                 except:
-                    breakAtLastLoop = True
+                    breakRowLoop = True
 
             elif 2 <= td_index <= 6:
                 # print(td)
@@ -130,13 +132,18 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                     ui.append(td.get_text())
                 else:
                     ui.append('NoData')
+                # TODO: Now we can only handle these decays which produce the corresponding item in the daughter element
+                #  position, otherwise, we can not handle. This is a bug.
+                if (td_index == 5) and sum([(i in td.get_text()) for i in ['α','β','IT','ec']])==0:
+                    ui = []
+                    breakRowLoop = True
             else:
-                break
-        # One row is added
+                breakRowLoop = True
+        # One row's elements are added. If blank, do not continue to add a blank list.
         if ui != []:
             ulist.append(ui)
     dataqueue.put(ulist)
-    print('I have put the daughter scheme of ' + Symbol + ' in the queue')
+    print('I have put the decay scheme of ' + Symbol + ' in the queue')
     return
 
 
@@ -146,7 +153,7 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
 if __name__ == '__main__':
     # lock = threading.Lock()
     AllList = []
-    RequiredElements = set(['Rn_222'])
+    RequiredElements = set(['Np_237'])
     AllElements = RequiredElements.copy()
     # RequiredElements.remove('Nonsense')
     # AllElements.remove('Nonsense')
