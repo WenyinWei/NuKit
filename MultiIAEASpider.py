@@ -152,13 +152,12 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                 if (td_index == 5) and sum([(i in td.get_text()) for i in ['α','β','IT','ec']])==0:
                     ui = []
                     breakRowLoop = True
-            else:
+            else: # If the 8th element reached, break the loop
                 breakRowLoop = True
         # One row's elements are added. If blank, do not continue to add a blank list.
         if ui != []:
             for i in range(len(ui)):
-                if isinstance(ui[i], str):
-                    ui[i] = "".join(ui[i].split())
+                if isinstance(ui[i], str): ui[i] = "".join(ui[i].split())
             ulist.append(ui)
     dataqueue.put(ulist)
     print(Symbol + '_' + A + ': decay scheme has been put in the queue')
@@ -168,13 +167,9 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
 
 
 
-if __name__ == '__main__':
-    # lock = threading.Lock()
+def IAEAspider(RequiredElements):
     AllList = []
-    RequiredElements = set(['U_238'])
     AllElements = RequiredElements.copy()
-    # RequiredElements.remove('Nonsense')
-    # AllElements.remove('Nonsense')
     PickedElements = set()
     WaitElements = AllElements - PickedElements
     while not(WaitElements == set()):
@@ -211,33 +206,5 @@ if __name__ == '__main__':
     SaveContents(AllList)
     SaveGraph(AllList)
 
-
-    # Abandoned graph making code
-    # The following code supports a network display with networkx but with some bugs that it can not detect
-    # the same node by labels. What's more, it is too ugly.
-
-    # import matplotlib.pyplot as plt
-    # import networkx as nx
-    # G = nx.Graph()
-    # for i in AllList:
-    #     addingNode = i[3]+'_'+i[0]
-    #     if addingNode not in G.nodes(): G.add_node(addingNode, pos=(i[2],i[4]))
-    #     addingNode = i[13]+'_'+i[10]
-    #     if addingNode not in G.nodes(): G.add_node(addingNode, pos=(i[12],i[14]))
-    # for i in AllList:
-    #     parentNode = i[3] + '_' + i[0]
-    #     daughterNode = i[13] + '_' + i[10]
-    #     G.add_edge(parentNode, daughterNode)
-    # pos = nx.get_node_attributes(G, 'pos')
-    # # 把每个节点中的位置pos信息导出来
-    # plt.figure(figsize=(16,16))
-    # nx.draw(G, pos,
-    #         with_labels=True,
-    #         # node_color=range(24),
-    #         node_size=200,
-    #         cmap=plt.cm.Dark2,  # matplotlib的调色板，可以搜搜，很多颜色呢
-    #         edge_cmap=plt.cm.Blues
-    #         )
-    # plt.show()
-    # print(G.nodes(data=True))
-    # print(G.edges(data=True))
+if __name__ == '__main__':
+    IAEAspider(set(['U_235', 'U_238']))
