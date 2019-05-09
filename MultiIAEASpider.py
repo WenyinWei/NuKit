@@ -30,8 +30,6 @@ def SaveContents(ulist):
         writer.writerow(tableHead)
         for i in range(len(ulist)):
             # TODO: need to delete all non-breaking blank \xa0 while collecting the data. otherwise here will arise an error
-            for j in range(len(ulist[i])):
-                ulist[i][j] = ulist[i][j].replace(u'\xa0', u' ')
             writer.writerow(ulist[i])
 
 def SaveGraph(ulist):
@@ -158,6 +156,9 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                 breakRowLoop = True
         # One row's elements are added. If blank, do not continue to add a blank list.
         if ui != []:
+            for i in range(len(ui)):
+                if isinstance(ui[i], str):
+                    ui[i] = "".join(ui[i].split())
             ulist.append(ui)
     dataqueue.put(ulist)
     print(Symbol + '_' + A + ': decay scheme has been put in the queue')
