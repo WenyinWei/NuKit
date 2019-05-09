@@ -4,6 +4,7 @@ import requests
 import csv
 from bs4 import BeautifulSoup
 import os
+import re  # extract numbers from a string
 import multiprocessing
 
 
@@ -82,7 +83,6 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
         Raises:
             Unknown.
     """
-
     if not('m' in A):
         url = 'https://www-nds.iaea.org/relnsd/LCServlet?tbltype=NR&html5=N&qry=SYMBOL=' + Symbol + '@@@ZPN=' + A
     else:
@@ -102,56 +102,45 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
     # Iterate every ROW in this table.
     # tr means a row!
     for tr in trs[2:]:
-        tr_index = tr_index + 1
+        tr_index = tr_index + 1 # row index
         ui = []
-        # we think the row is not useful at all if that is not the row we want.
+        # We think the row is not useful if that is not the row we want and set breakRowLoop to True .
         breakRowLoop = False
-        td_index = 0;
-        # Iterate every element in this row
+        td_index = 0; # element index
+        # Iterate every element in this row.
+        # td mean an element of a row!
         for td in tr:
             td_index = td_index + 1
             if breakRowLoop: break
             if td_index == 1 or td_index == 7:
-                # print("This is parent element")
-                # print(td)
-                elementHead = True
+                # These two elements are chemical element format
                 try:
+                    elementHead = True
                     for tdd in td.table.tr:
-                        if not elementHead:
+                        if not elementHead: # If the element if not a chemical
+
                             # '\xa0' is a blank in ISO encoding, to extract the blank, following command is used.
                             blankthrown = "".join(tdd.get_text().split())
                             if blankthrown.isdigit():
                                 ui.append(int(blankthrown))
                             else:
                                 ui.append(blankthrown)
+                        else: # For a table of element, the A and Z need to be handled specilally
 
-                        else:
-                            # For a table of element, the A and Z need to be handled specilally
-                            ThisA = (str(tdd).split('<br/>')[0])
-                            ThisA = (ThisA.split('>')[-1]).replace(' ', '')
-                            ThisA = "".join(ThisA.split())
-                            # print(ThisA, '     ', A) # for debugging
-                            if ThisA == A or td_index == 7:
-                                ThisA, ThisZ = str(tdd).split('<br/>')
-                                # print('ThisA', ThisA)
-                                # print('ThisZ', ThisZ)
-                                ThisA = ThisA.split('>')[-1]
-                                ThisZ = ThisZ.split('<')[0]
-                                ThisA.replace(" ", "")
-                                ThisA = "".join(ThisA.split())
-                                ThisZ.replace(" ", "")
-                                ui.append(ThisA)
-                                if not ('m' in ThisA):
-                                    ui.append(int(ThisA))
-                                    ui.append(int(ThisZ))
-                                else:
-                                    ui.append(int(ThisA.split('m')[0]))
-                                    ui.append(int(ThisZ))
+                            # By the re package, we can find all integers in the string quickly and avoid unnoticeable
+                            #  blank encoded with strange format.
+                            _, ThisA, ThisZ = re.findall(r"\d+m?\d*", str(tdd))
+                            if ThisA == A or td_index == 7: # Check that it is really what we want, sometimes you
+                                # searched for U_235 but U_235m1 also appears
+
+                                ui.append(ThisA)                        # 235(m1), string
+                                ui.append(int(ThisA.split('m')[0]))     # 235, integer
+                                ui.append(int(ThisZ))                   # 132, integer
                                 elementHead = False
-                            else:
+                            else: # If this element is not what you want, U_235m1 rather than U_235, break the loop
                                 breakRowLoop = True
                                 break
-                except:
+                except: # If the daughter is blank which correspondence to special kinds of reactions, drop it
                     breakRowLoop = True
 
             elif 2 <= td_index <= 6:
@@ -188,7 +177,7 @@ if __name__ == '__main__':
     PickedElements = set()
     WaitElements = AllElements - PickedElements
     while not(WaitElements == set()):
-        print(str(WaitElements) + ': parallel search for decay daughter of this(these) elements has started')
+        print(str(WaitElements) + ': parallel search for decay daughter of the selected element(s) has started')
         l = len(WaitElements)
         q = multiprocessing.Queue()  # queue for data 队列
         threads = []  # list for all threads 全部线程
