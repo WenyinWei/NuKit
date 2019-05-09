@@ -25,18 +25,17 @@ def SaveContents(ulist):
 
     tableHead = ['ParentAm','ParentA', 'ParentZ', 'Parent', 'ParentN', 'T_{1/2}', 'E_X[keV]', 'Jp', \
           'Decay', 'Q-decay', 'DaughterAm', 'DaughterA', 'DaughterZ', 'Daughter', 'DaughterN']
-    with open(os.getcwd()+"/Element.csv", 'w') as f:
+    with open(os.getcwd()+"/Element.csv", 'w', encoding='UTF-8') as f:
         writer = csv.writer(f)
         writer.writerow(tableHead)
         for i in range(len(ulist)):
-            # TODO: need to delete all non-breaking blank \xa0 while collecting the data. otherwise here will arise an error
             writer.writerow(ulist[i])
 
 
 def SaveGraph(ulist):
 
     # This is a function to write down the data we collected in a way that suits a javascript visualization package "springy"
-    with open(os.getcwd()+"/DecayGraph.csv", 'w') as f:
+    with open(os.getcwd()+"/DecayGraph.csv", 'w', encoding='UTF-8') as f:
         writer = csv.writer(f)
         all_element = []
         for i in ulist:
@@ -204,7 +203,6 @@ def IAEAspider(RequiredElements:set):
         for thread in threads:
             thread.join()
 
-        results = []  # 保存结果
         for i in range(l):
             AllList.extend(q.get())  # 从q中拿出值，每次只能按顺序拿出一个值
         if len(AllList)==1:
