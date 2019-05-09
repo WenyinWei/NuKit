@@ -32,6 +32,7 @@ def SaveContents(ulist):
             # TODO: need to delete all non-breaking blank \xa0 while collecting the data. otherwise here will arise an error
             writer.writerow(ulist[i])
 
+
 def SaveGraph(ulist):
 
     # This is a function to write down the data we collected in a way that suits a javascript visualization package "springy"
@@ -58,7 +59,7 @@ def SaveGraph(ulist):
             elif 'ec' in i[8]: color = '#EDC951'
             elif 'IT' in i[8]: color = '#7DBE3C'
             else:              color = '#BE7D3C'
-            this_edge = '['+parent_node+','+daughter_node+',{color: \''+color+'\'}],\n'
+            this_edge = ' [ '+parent_node+' , '+daughter_node+' ,{color: \''+color+'\', label: \'' +i[8]+ '\' }],\n'
             edges.append(this_edge)
         edges = set(edges)
         f.writelines(edges)
@@ -156,7 +157,7 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                 breakRowLoop = True
         # One row's elements are added. If blank, do not continue to add a blank list.
         if ui != []:
-            for i in range(len(ui)):
+            for i in range(len(ui)): # delete all unnoticeable blanks
                 if isinstance(ui[i], str): ui[i] = "".join(ui[i].split())
             ulist.append(ui)
     dataqueue.put(ulist)
@@ -164,10 +165,21 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
     return
 
 
+def IAEAspider(RequiredElements:set):
+    """
+    The main function to collect decay graph data of Required Elements
 
+        Args:
+        RequiredElements: This is the origin elements of your required decay graph. It must be in set format.
+        e.x. set(['U_235']) or set(['U_235', 'U_238'])
 
+        Returns:
+            The function itself does not return anything. Information would be stored in the Element.csv and
+            DecayGraph.csv.
 
-def IAEAspider(RequiredElements):
+        Raises:
+            Unknown.
+    """
     AllList = []
     AllElements = RequiredElements.copy()
     PickedElements = set()
@@ -206,5 +218,6 @@ def IAEAspider(RequiredElements):
     SaveContents(AllList)
     SaveGraph(AllList)
 
+
 if __name__ == '__main__':
-    IAEAspider(set(['U_235', 'U_238']))
+    IAEAspider(set(['U_235']))
