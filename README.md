@@ -22,7 +22,7 @@ Here restores the tools for nuclear science analysis
 
       $$ \frac{dN}{dt} = - \frac{ln2}{T_{1/2}} N + \sum_i \frac{ln2}{T_{1/2}} N_i$$
 
-      (TODO)目前我们仅考虑衰变后子核在极短时间内跃迁到基态,不考虑同素异能态.等以后有时间了再处理.
+      (TODO)　由于 IAEA 搜索页面包含同素异能态,我们的程序内部已经包含有.
 
       (Possible Bug)当变量极小或极大时,Python可能运算误差会很大,看看decimal能不能解决这一问题.
 
@@ -35,6 +35,16 @@ Here restores the tools for nuclear science analysis
 2. 针对核数据库的爬虫 https://www-nds.iaea.org/relnsd/NdsEnsdf/QueryForm.html
 这一部分已经实现了衰变链的获取.
 
+为了做出重同位素随时间的变化,2D的热力图可以考虑
+
+- https://plot.ly/python/2D-Histogram/
+- https://help.plot.ly/make-a-2d-histogram-heatmap/
+- https://plot.ly/python/histograms/
+- https://python-graph-gallery.com/82-marginal-plot-with-seaborn/
+- 这个用来绘空间变化应该很好 http://people.bu.edu/andasari/courses/numericalpython/python.html
+
+我发现 odeint 甚至无法指定算法,我决定不使用它而是用更开放的 odespy. 
+Remark: odespy 已经过期了,它只适用于python2.7,我现在在用C++程序包odeint
 3. 解析方法实现
 
 4. 数值方法实现
@@ -43,11 +53,37 @@ Here restores the tools for nuclear science analysis
 
 6. 
 
-
 https://lmfit.github.io/lmfit-py/builtin_models.html#lmfit.models.ExpressionModel
 https://lmfit.github.io/lmfit-py/model.html#composite-models-adding-or-multiplying-models
 https://itl.nist.gov/div898/strd/nls/data/gauss2.shtml
 https://itl.nist.gov/div898/strd/nls/nls_main.shtml
 https://lmfit.github.io/lmfit-py/builtin_models.html#exponentialmodel
 http://cars9.uchicago.edu/software/python/lmfit/
-[Drawing in a matplotlib widget in QtDesigner](https://stackoverflow.com/questions/36222998/drawing-in-a-matplotlib-widget-in-qtdesigner)
+
+1. ***References for C++ odeint***
+
+   - [Solving ordinary differential equations in C++](https://www.codeproject.com/Articles/43607/Solving-ordinary-differential-equations-in-C)
+   - [odeint v2 - Solving ordinary differential equations in C++](https://www.codeproject.com/Articles/268589/odeint-v2-Solving-ordinary-differential-equations)
+   - [odeint--An advanced C++ framework for numerical integration of
+     ordinary differential equations](https://headmyshoulder.github.io/odeint-v2/odeint_talk.pdf)
+   - [Homepage of odeint](http://headmyshoulder.github.io/odeint-v2/index.html)
+   - [Numerical integration in C++ with Boost odeint](http://boccelliengineering.altervista.org/junk/boost_integration/boost_odeint.html)
+
+2. ***References for C++ Visualization***
+
+   Two way for visualization in C++ are considerated
+
+   - Qwt
+   - MathGL
+
+3. ***References for fission product***
+
+   - [Fission product yield](https://wikivisually.com/wiki/Fission_product_yield) 
+   - [Fission product yield](https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Fission_product_yield.html)
+
+4. ***References for neutron cross section***
+
+   - [Neutron cross-sections](http://www.kayelaby.npl.co.uk/atomic_and_nuclear_physics/4_7/4_7_2.html)
+
+中子屏蔽中的关键问题
+聚变设备中的新型中子屏蔽环流设计

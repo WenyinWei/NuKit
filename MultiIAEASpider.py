@@ -8,16 +8,34 @@ import multiprocessing
 
 
 def SaveContents(ulist):
-    # The head of table
+    """
+    This is the function that write down the data we collected in the first several lines in IAEA table.
+    The head of table
+
+        Args:
+        ulist: This is what we are going to write down to the file Element.csv
+
+        Returns:
+            The function itself does not return anything. Information would be stored in the Element.csv.
+
+        Raises:
+            Unknown.
+    """
+
     tableHead = ['ParentAm','ParentA', 'ParentZ', 'Parent', 'ParentN', 'T_{1/2}', 'E_X[keV]', 'Jp', \
           'Decay', 'Q-decay', 'DaughterAm', 'DaughterA', 'DaughterZ', 'Daughter', 'DaughterN']
     with open(os.getcwd()+"/Element.csv", 'w') as f:
         writer = csv.writer(f)
         writer.writerow(tableHead)
         for i in range(len(ulist)):
+            # TODO: need to delete all non-breaking blank \xa0 while collecting the data. otherwise here will arise an error
+            for j in range(len(ulist[i])):
+                ulist[i][j] = ulist[i][j].replace(u'\xa0', u' ')
             writer.writerow(ulist[i])
 
 def SaveGraph(ulist):
+
+    # This is a function to write down the data we collected in a way that suits a javascript visualization package "springy"
     with open(os.getcwd()+"/DecayGraph.csv", 'w') as f:
         writer = csv.writer(f)
         all_element = []
@@ -36,32 +54,43 @@ def SaveGraph(ulist):
             daughter_node = '\'' + i[13] + '-' + i[10] + '\''
             parent_node.replace(' ','')
             daughter_node.replace(' ','')
-            if 'α' in i[8]:
-                color = '#CC333F'
-            elif 'β+' in i[8]:
-                color = '#EB6841'
-            elif 'ec' in i[8]:
-                color = '#EDC951'
-            elif 'IT' in i[8]:
-                color = '#7DBE3C'
-            else:
-                color = '#BE7D3C'
+            if 'α' in i[8]:    color = '#CC333F'
+            elif 'β+' in i[8]: color = '#EB6841'
+            elif 'ec' in i[8]: color = '#EDC951'
+            elif 'IT' in i[8]: color = '#7DBE3C'
+            else:              color = '#BE7D3C'
             this_edge = '['+parent_node+','+daughter_node+',{color: \''+color+'\'}],\n'
             edges.append(this_edge)
         edges = set(edges)
         f.writelines(edges)
 
 def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
+    """
+    This function search for data of the element: Symabol_A in IAEA online database and put the first several columns
+    of the website table as a result of search. It will eventually be put in the dataqueue to be loaded outside of
+    the funciton.
+
+        Args:
+            Symbol: symbol of the element to search for
+            A: mass number of the element to search for
+            dataqueue: It does not offer infomation to this function. It is used to store the infomation we collect
+            to make the parallel mechanism work, without need to worry about which element would be stored first.
+
+        Returns:
+            The function itself does not return anything. Information would be stored in the argument dataqueue.
+
+        Raises:
+            Unknown.
+    """
+
     if not('m' in A):
         url = 'https://www-nds.iaea.org/relnsd/LCServlet?tbltype=NR&html5=N&qry=SYMBOL=' + Symbol + '@@@ZPN=' + A
     else:
         url = 'https://www-nds.iaea.org/relnsd/LCServlet?tbltype=NR&html5=N&qry=SYMBOL=' + Symbol + '@@@ZPN=' + A.split('m')[0]
     response = requests.get(url=url)
-    # print(response.text)
+
     # Let BeautifulSoup handle the text
     soup = BeautifulSoup(response.text, 'html.parser')
-    # You can have a neat look at the soup by the following commented line
-    # print(soup.prettify())
 
     # The data table list
     ulist = []
@@ -70,13 +99,12 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
     trs = soup.find_all('tr')
 
     tr_index = 0
-    # Iterate every three row in this table
+    # Iterate every ROW in this table.
+    # tr means a row!
     for tr in trs[2:]:
         tr_index = tr_index + 1
-        # if tr_index % 3 != 1: continue ＃　This functionality to screen which line is useful has been proved to be not
-        # powerful as checking the fifth element of the row.
         ui = []
-        # print(tr)
+        # we think the row is not useful at all if that is not the row we want.
         breakRowLoop = False
         td_index = 0;
         # Iterate every element in this row
@@ -143,7 +171,7 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
         if ui != []:
             ulist.append(ui)
     dataqueue.put(ulist)
-    print('I have put the decay scheme of ' + Symbol + ' in the queue')
+    print(Symbol + '_' + A + ': decay scheme has been put in the queue')
     return
 
 
@@ -153,32 +181,31 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
 if __name__ == '__main__':
     # lock = threading.Lock()
     AllList = []
-    RequiredElements = set(['Np_237'])
+    RequiredElements = set(['U_238'])
     AllElements = RequiredElements.copy()
     # RequiredElements.remove('Nonsense')
     # AllElements.remove('Nonsense')
     PickedElements = set()
     WaitElements = AllElements - PickedElements
     while not(WaitElements == set()):
-        print(WaitElements)
+        print(str(WaitElements) + ': parallel search for decay daughter of this(these) elements has started')
         l = len(WaitElements)
-        q = multiprocessing.Queue()  # 队列
-        threads = []  # 全部线程
+        q = multiprocessing.Queue()  # queue for data 队列
+        threads = []  # list for all threads 全部线程
         PickedElements = PickedElements | WaitElements
         for i in range(l):
-            # Totally l threads to do this job l个线程来执行函数
+            # There exits l threads to do this job 一共有 l 个线程来执行函数
             RandomElement = WaitElements.pop()
-            print(RandomElement)
+            print(RandomElement + ': thread search for the element has started')
             # There remains some problems with D decay which radiates H2. This daughter nucleuis does not appear in the daughter item, so bug arises.
             t = multiprocessing.Process(target=SearchDecayDaughter,
                                         args=(RandomElement.split('_')[0], RandomElement.split('_')[1], q))
             t.start()
             threads.append(t)  # Add the current thread to the [threads] list 当前线程加入全部线程中
 
-        # 对主线程中的每一个线程都执行join()
+        # Wait for every thread to be completed 对主线程中的每一个线程都执行join()
         for thread in threads:
             thread.join()
-        print('One MultiSearch has finished')
 
         results = []  # 保存结果
         for i in range(l):
