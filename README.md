@@ -31,6 +31,9 @@ Here restores the tools for nuclear science analysis
       1. 给定初始状态的核素种类和数量
       2. 查询以它们为起点所有可能产生的核素以对应的衰变周期.
       3. 对当前核素的数量进行偏微分方程数值更新.
+***References for C++***
+- [比较类并删除同样的类](https://blog.csdn.net/subfate/article/details/51594759)
+- [C/C++读写csv文件](https://www.cnblogs.com/findumars/p/7252854.html)
 
 2. 针对核数据库的爬虫 https://www-nds.iaea.org/relnsd/NdsEnsdf/QueryForm.html
 这一部分已经实现了衰变链的获取.
