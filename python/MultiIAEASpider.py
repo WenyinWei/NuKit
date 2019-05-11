@@ -8,7 +8,7 @@ import re  # extract numbers from a string
 import multiprocessing
 
 
-def SaveContents(ulist):
+def SaveContents(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
     """
     This is the function that write down the data we collected in the first several lines in IAEA table.
     The head of table
@@ -24,18 +24,19 @@ def SaveContents(ulist):
     """
 
     tableHead = ['ParentAm','ParentA', 'ParentZ', 'Parent', 'ParentN', 'T_{1/2}', 'E_X[keV]', 'Jp', \
-          'Decay', 'Q-decay', 'DaughterAm', 'DaughterA', 'DaughterZ', 'Daughter', 'DaughterN']
-    with open(os.getcwd()+"/Element.csv", 'w', encoding='UTF-8') as f:
+          'Decay', 'Q-decay', 'DaughterAm', 'DaughterA', 'DaughterZ', 'Daughter', 'DaughterN', 'lambda[h^-1]',
+                 'Partial_lambda[h^-1]']
+    with open(datadir+"/Element.csv", 'w', encoding='UTF-8') as f:
         writer = csv.writer(f)
         writer.writerow(tableHead)
         for i in range(len(ulist)):
             writer.writerow(ulist[i])
 
 
-def SaveGraph(ulist):
+def SaveGraph(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
 
     # This is a function to write down the data we collected in a way that suits a javascript visualization package "springy"
-    with open(os.getcwd()+"/DecayGraph.csv", 'w', encoding='UTF-8') as f:
+    with open(datadir+"/DecayGraph.csv", 'w', encoding='UTF-8') as f:
         writer = csv.writer(f)
         all_element = []
         for i in ulist:
@@ -154,17 +155,42 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                     breakRowLoop = True
             else: # If the 8th element reached, break the loop
                 breakRowLoop = True
-        # One row's elements are added. If blank, do not continue to add a blank list.
-        if ui != []:
-            for i in range(len(ui)): # delete all unnoticeable blanks
-                if isinstance(ui[i], str): ui[i] = "".join(ui[i].split())
-            ulist.append(ui)
+        # One row's elements are added. If blank, do not continue to add a blank list. Similarly, if 'x' in ui[8] (
+        # which is the symbol of scientific notification), it often means the partial decay path only occupied a small
+        #  part.
+        if (ui != []) :
+            if  ('x' not in ui[8]):
+                for i in range(len(ui)): # delete all unnoticeable blanks
+                    if isinstance(ui[i], str): ui[i] = "".join(ui[i].split())
+                if ('ms' in ui[5]):   timescale = 3600*1000
+                elif ('μs' in ui[5]): timescale = 3600*1000000
+                elif ('ns' in ui[5]): timescale = 3600*1000000000
+                elif ('s' in ui[5]):  timescale = 3600
+                elif ('y' in ui[5]):  timescale = 1/365/24
+                elif ('min' in ui[5]):timescale = 60
+                elif ('m' in ui[5]):  timescale = 1/24/30
+                elif ('d' in ui[5]):  timescale = 1/24
+                elif ('h' in ui[5]):  timescale = 1
+                if('x' in ui[5]):
+                    tmpnums = re.findall(r'\d+\.?\d*', ui[5])
+                    halfTmain = float(tmpnums[0])
+                    scinota = tmpnums[1]
+                    scinota = float(scinota[2:])
+                    lamb = 0.69314718055995/halfTmain/(10**(scinota))*timescale
+                else:
+                    halfT = re.findall(r'\d+\.?\d*', ui[5])[0]
+                    halfT = float(halfT)
+                    lamb = 0.69314718055995/halfT*timescale
+
+                ui.append(lamb)
+                ui.append(lamb*float(re.findall(r'\d+\.?\d*', ui[8])[0])/100)
+                ulist.append(ui)
     dataqueue.put(ulist)
     print(Symbol + '_' + A + ': decay scheme has been put in the queue')
     return
 
 
-def IAEAspider(RequiredElements:set):
+def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
     """
     The main function to collect decay graph data of Required Elements
 
@@ -213,8 +239,8 @@ def IAEAspider(RequiredElements:set):
         WaitElements = AllElements - PickedElements
 
     print(AllElements)
-    SaveContents(AllList)
-    SaveGraph(AllList)
+    SaveContents(AllList, datadir = datadir)
+    SaveGraph(AllList, datadir = datadir)
 
 
 if __name__ == '__main__':
