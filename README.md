@@ -72,21 +72,18 @@ http://cars9.uchicago.edu/software/python/lmfit/
    - [Homepage of odeint](http://headmyshoulder.github.io/odeint-v2/index.html)
    - [Numerical integration in C++ with Boost odeint](http://boccelliengineering.altervista.org/junk/boost_integration/boost_odeint.html)
 
-2. ***References for C++ Visualization***
-
-   Two way for visualization in C++ are considerated
-
-   - Qwt
-   - MathGL
-
-3. ***References for fission product***
+2. ***References for fission product***
 
    - [Fission product yield](https://wikivisually.com/wiki/Fission_product_yield) 
    - [Fission product yield](https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Fission_product_yield.html)
 
-4. ***References for neutron cross section***
+3. ***References for neutron cross section***
 
    - [Neutron cross-sections](http://www.kayelaby.npl.co.uk/atomic_and_nuclear_physics/4_7/4_7_2.html)
-
+4. ***References for Qt***
+   - [QT解决程序缺少dll问题](https://blog.csdn.net/qq_36409711/article/details/78436252)
+   - [使用devenv/MSBuild在命令行编译单个project](https://www.cnblogs.com/itech/archive/2011/12/22/2297587.html)
+5. ***Cmake***
+   - [Cmake project structure](https://arne-mertz.de/2018/06/cmake-project-structure/)
 中子屏蔽中的关键问题
 聚变设备中的新型中子屏蔽环流设计

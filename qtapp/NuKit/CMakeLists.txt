@@ -1,0 +1,42 @@
+﻿CMAKE_MINIMUM_REQUIRED(VERSION 3.8)
+PROJECT(NuKit)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+# SET(CMAKE_BUILD_TYPE DEBUG)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+
+
+set (CMAKE_PREFIX_PATH "C:\\Qt\\5.12.2\\msvc2017\\")
+FIND_PACKAGE(Qt5DataVisualization REQUIRED)
+FIND_PACKAGE(Qt5Gui REQUIRED)
+FIND_PACKAGE(Qt5Core REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Boost)
+IF (Boost_FOUND)
+	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+	ADD_DEFINITIONS( "-DHAS_BOOST" )
+	MESSAGE("${Boost_INCLUDE_DIRS}")
+	MESSAGE("${Boost_LIBRARIES}")
+ELSE()
+	MESSAGE(FATAL_ERROR "Not found Boost")
+ENDIF()
+
+
+AUX_SOURCE_DIRECTORY(./doc List_Others)
+SET(List_Sources main.cpp graphmodifier.cpp)
+SET(List_Headers graphmodifier.h)
+
+ADD_EXECUTABLE(odeintTest ${List_Sources} ${List_Headers} ${List_Others})
+
+TARGET_LINK_LIBRARIES(odeintTest Qt5::Widgets)
+TARGET_LINK_LIBRARIES(odeintTest Qt5::Core)
+TARGET_LINK_LIBRARIES(odeintTest Qt5::DataVisualization)
+TARGET_LINK_LIBRARIES(odeintTest Qt5::Gui)
+# TARGET_LINK_LIBRARIES(odeintTest Boost)
+# AUX_SOURCE_DIRECTORY(./src SRC_LIST)
+# ADD_EXECUTABLE(odeintTest  ${SRC_LIST})
+# SET_TARGET_PROPERTIES(odeintTest PROPERTIES DEBUG_POSTFIX "_d")     
+# SET_TARGET_PROPERTIES(odeintTest PROPERTIES RELEASE_POSTFIX "_r")   
