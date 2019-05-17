@@ -24,13 +24,14 @@ ELSE()
 	MESSAGE(FATAL_ERROR "Not found Boost")
 ENDIF()
 
+AUX_SOURCE_DIRECTORY(. LIST_MAIN)
 
-AUX_SOURCE_DIRECTORY(./doc List_Others)
-SET(List_Sources main.cpp graphmodifier.cpp)
-SET(List_Headers graphmodifier.h)
+INCLUDE_DIRECTORIES(./graphmodifier ./header)
+ADD_SUBDIRECTORY(graphmodifier)
 
-ADD_EXECUTABLE(odeintTest ${List_Sources} ${List_Headers} ${List_Others})
+ADD_EXECUTABLE(odeintTest ${LIST_MAIN} )
 
+TARGET_LINK_LIBRARIES(odeintTest graphmodifier)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::Widgets)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::Core)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::DataVisualization)

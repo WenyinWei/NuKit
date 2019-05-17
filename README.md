@@ -1,4 +1,4 @@
-# NuclearKit
+# NuKit
 
 Here restores the tools for nuclear science analysis 
 
@@ -71,12 +71,10 @@ http://cars9.uchicago.edu/software/python/lmfit/
      ordinary differential equations](https://headmyshoulder.github.io/odeint-v2/odeint_talk.pdf)
    - [Homepage of odeint](http://headmyshoulder.github.io/odeint-v2/index.html)
    - [Numerical integration in C++ with Boost odeint](http://boccelliengineering.altervista.org/junk/boost_integration/boost_odeint.html)
-
 2. ***References for fission product***
 
    - [Fission product yield](https://wikivisually.com/wiki/Fission_product_yield) 
    - [Fission product yield](https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/wiki/Fission_product_yield.html)
-
 3. ***References for neutron cross section***
 
    - [Neutron cross-sections](http://www.kayelaby.npl.co.uk/atomic_and_nuclear_physics/4_7/4_7_2.html)
@@ -87,3 +85,5 @@ http://cars9.uchicago.edu/software/python/lmfit/
    - [Cmake project structure](https://arne-mertz.de/2018/06/cmake-project-structure/)
 中子屏蔽中的关键问题
 聚变设备中的新型中子屏蔽环流设计
+6. ***物理引擎***
+  - 我查阅了许多相关引擎,最适合物理研究的似乎是这个 [chrono](http://projectchrono.org/),我已经决定使用它了,但可能会需要一些时间.
