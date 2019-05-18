@@ -26,12 +26,13 @@ ENDIF()
 
 AUX_SOURCE_DIRECTORY(. LIST_MAIN)
 
-INCLUDE_DIRECTORIES(./graphmodifier ./header)
+INCLUDE_DIRECTORIES(./graphmodifier ./header ./frame)
 ADD_SUBDIRECTORY(graphmodifier)
-
+ADD_SUBDIRECTORY(frame)
 ADD_EXECUTABLE(odeintTest ${LIST_MAIN} )
 
 TARGET_LINK_LIBRARIES(odeintTest graphmodifier)
+TARGET_LINK_LIBRARIES(odeintTest frame)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::Widgets)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::Core)
 TARGET_LINK_LIBRARIES(odeintTest Qt5::DataVisualization)

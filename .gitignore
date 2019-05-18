@@ -5,3 +5,5 @@ cpp/odeintTest/.vs/
 qtapp/NuKit/build-src-Desktop_Qt_5_12_2_MSVC2017_32bit-Default/
 qtapp/NuKit/build-src-Desktop_Qt_5_12_2_MSVC2017_32bit-Debug/
 qtapp/NuKit/src/bin/
+qtapp/NuKit/src/lib/
+qtapp/NuKit/src/CMakeLists.txt.user

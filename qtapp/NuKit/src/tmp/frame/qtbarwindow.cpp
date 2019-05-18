@@ -2,7 +2,7 @@
 QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
 {
     setWindowTitle(QStringLiteral("NuKit V0.1"));
-
+    //    createWindow();
     Q3DBars *widgetgraph = new Q3DBars();
     QWidget *container = QWidget::createWindowContainer(widgetgraph);
     QSize screenSize = widgetgraph->screen()->size();
