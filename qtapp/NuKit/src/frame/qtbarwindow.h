@@ -17,9 +17,12 @@ class QtBarWindow : public QWidget
 {
     Q_OBJECT
 
+
 public:
     explicit QtBarWindow(QWidget *parent);
 
+
+
 private:
-//    void createWindow();
+    void createWindow();
 };

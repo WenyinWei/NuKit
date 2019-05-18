@@ -27,30 +27,12 @@
 **
 ****************************************************************************/
 
-#include "qtbarwindow.h"
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QSlider>
-#include <QtWidgets/QFontComboBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QMessageBox>
-#include <QtGui/QScreen>
-#include <QtGui/QFontDatabase>
+#include "mainwindow.h"
 
 int main(int argc, char **argv)
 {
-    //! [0]
     QApplication app(argc, argv);
-    QWidget *w = new QWidget();
-    QHBoxLayout *hLayout = new QHBoxLayout(w);
-    QVBoxLayout *vLayout = new QVBoxLayout();
-    hLayout->addLayout(vLayout);
-    QtBarWindow *widget = new QtBarWindow(w);
-    widget->show();
+    MainWindow *mainwindow = new MainWindow();
+    mainwindow->show();
     return app.exec();
-    //! [3]
 }

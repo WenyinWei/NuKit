@@ -194,7 +194,6 @@ void GraphModifier::resetData(int time_index)
         Nrange << QString::number(i + min_Nnum);
 
     dataSet->reserve(Zlen);
-    qDebug() << "Dataset Size: " << dataSet->size();
     for (int Z = 0; Z < Zlen; Z++)
     {
         dataRow = new QBarDataRow(Nlen);
@@ -210,7 +209,6 @@ void GraphModifier::resetData(int time_index)
     {
         int reducedZ = m_Znum[i] - min_Znum;
         int reducedN = m_Nnum[i] - min_Nnum;
-        qDebug() << "Reduced Z" << reducedZ << "Reduced N" << reducedN;
         dataRow = dataSet->at(reducedZ);
         (*dataRow)[reducedN].setValue(spdata[time_index][i]);
     }
