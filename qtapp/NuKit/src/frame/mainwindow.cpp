@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(QStringLiteral("Nukit V0.2"));
 }
 
 MainWindow::~MainWindow()
@@ -27,10 +28,10 @@ void MainWindow::on_simulateButton_clicked()
     QString original_text = this->ui->inputText->toPlainText();
     QStringList text_list = original_text.split("\n");
     QVector<QStringList> text_table;
-    for (int i = 0; i<text_list.size();i++)
+    for (int i = 0; i < text_list.size(); i++)
     {
         text_table.append(text_list[i].split(" "));
-//        qDebug()<<text_table[i][0];
+        //        qDebug()<<text_table[i][0];
     };
     bar_window_list.push_back(new QtBarWindow(this));
     bar_window_list.back()->show();

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include "qtbarwindow.h"
 #include <QMainWindow>
@@ -23,3 +24,5 @@ private:
     Ui::MainWindow *ui;
     QVector<QPointer<QtBarWindow>> bar_window_list;
 };
+
+#endif // MAINWINDOW_H

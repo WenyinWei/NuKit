@@ -1,7 +1,7 @@
 #include "qtbarwindow.h"
 QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
 {
-    setWindowTitle(QStringLiteral("NuKit V0.1"));
+    setWindowTitle(QStringLiteral("Point Model Element Density Evolution"));
 
     Q3DBars *widgetgraph = new Q3DBars();
     QWidget *container = QWidget::createWindowContainer(widgetgraph);
