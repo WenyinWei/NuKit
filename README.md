@@ -38,13 +38,7 @@ Here restores the tools for nuclear science analysis
 2. 针对核数据库的爬虫 https://www-nds.iaea.org/relnsd/NdsEnsdf/QueryForm.html
 这一部分已经实现了衰变链的获取.
 
-为了做出重同位素随时间的变化,2D的热力图可以考虑
 
-- https://plot.ly/python/2D-Histogram/
-- https://help.plot.ly/make-a-2d-histogram-heatmap/
-- https://plot.ly/python/histograms/
-- https://python-graph-gallery.com/82-marginal-plot-with-seaborn/
-- 这个用来绘空间变化应该很好 http://people.bu.edu/andasari/courses/numericalpython/python.html
 
 我发现 odeint 甚至无法指定算法,我决定不使用它而是用更开放的 odespy. 
 Remark: odespy 已经过期了,它只适用于python2.7,我现在在用C++程序包odeint

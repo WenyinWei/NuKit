@@ -30,15 +30,28 @@
 #ifndef GRAPHMODIFIER_H
 #define GRAPHMODIFIER_H
 
-#include <QtDataVisualization/q3dbars.h>
 #include <QtDataVisualization/qbardataproxy.h>
 #include <QtDataVisualization/qabstract3dseries.h>
+#include <QtDataVisualization/qcategory3daxis.h>
+#include <QtDataVisualization/qvalue3daxis.h>
+#include <QtDataVisualization/qbar3dseries.h>
+#include <QtDataVisualization/q3dscene.h>
+#include <QtDataVisualization/q3dcamera.h>
+#include <QtDataVisualization/q3dtheme.h>
+#include <QtDataVisualization/q3dbars.h>
 
-#include <QtGui/QFont>
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QPointer>
 #include <QtCore/QPropertyAnimation>
+#include <QtCore/QTime>
+#include <QtCore/qmath.h>
+
+#include <QtGui/QFont>
+
+#include <QtWidgets/QComboBox>
+
+#include "../DataClass/csvparser.hpp"
 
 using namespace QtDataVisualization;
 

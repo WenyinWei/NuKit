@@ -27,7 +27,7 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#include "./Frame/mainwindow.h"
 
 #include <QApplication>
 //#include <QtWidgets>

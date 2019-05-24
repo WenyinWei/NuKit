@@ -28,17 +28,6 @@
 ****************************************************************************/
 
 #include "graphmodifier.h"
-#include "csvparser.hpp"
-#include <QtDataVisualization/qcategory3daxis.h>
-#include <QtDataVisualization/qvalue3daxis.h>
-#include <QtDataVisualization/qbardataproxy.h>
-#include <QtDataVisualization/q3dscene.h>
-#include <QtDataVisualization/q3dcamera.h>
-#include <QtDataVisualization/qbar3dseries.h>
-#include <QtDataVisualization/q3dtheme.h>
-#include <QtCore/QTime>
-#include <QtWidgets/QComboBox>
-#include <QtCore/qmath.h>
 
 using namespace QtDataVisualization;
 
@@ -77,8 +66,8 @@ GraphModifier::GraphModifier(Q3DBars *bargraph)
     m_densityAxis->setSegmentCount(m_segments);
     m_densityAxis->setSubSegmentCount(m_subSegments);
     m_densityAxis->setRange(m_minval, m_maxval);
-//    It is a good example to set special symbols in QString, celsiusString do it
-//    m_densityAxis->setLabelFormat(QString(QStringLiteral("%.1f ") + celsiusString));
+    //    It is a good example to set special symbols in QString, celsiusString do it
+    //    m_densityAxis->setLabelFormat(QString(QStringLiteral("%.1f ") + celsiusString));
     m_densityAxis->setLabelFormat(QString(QStringLiteral("%.1f ")));
     m_densityAxis->setLabelAutoRotation(30.0f);
     m_densityAxis->setTitleVisible(true);
@@ -176,7 +165,7 @@ void GraphModifier::resetData(int time_index)
             min_Nnum = m_Nnum[i];
         if (max_Nnum < m_Nnum[i])
             max_Nnum = m_Nnum[i];
-        if(max_density<spdata[time_index][i])
+        if (max_density < spdata[time_index][i])
             max_density = spdata[time_index][i];
     }
 

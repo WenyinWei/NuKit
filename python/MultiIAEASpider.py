@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import os
 import re  # extract numbers from a string
 import multiprocessing
+from colorama import  Fore, Back, Style, init
 
 
 def SaveContents(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
@@ -33,21 +34,40 @@ def SaveContents(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpa
             writer.writerow(ulist[i])
 
 
-def SaveGraph(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
+def SaveGraph(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data',
+              name = 'DecayGraph.csv', htmlwriter = False):
 
     # This is a function to write down the data we collected in a way that suits a javascript visualization package "springy"
-    with open(datadir+"/DecayGraph.csv", 'w', encoding='UTF-8') as f:
-        writer = csv.writer(f)
+    if htmlwriter:
+        datadir = datadir +"/"+ name
+        name = "index.html"
+    if not os.path.isdir(datadir):
+        os.makedirs(datadir)
+    with open(datadir+"/"+name, 'w', encoding='UTF-8') as f:
         all_element = []
         for i in ulist:
             parent_node = '\'' + i[3] + '-' + i[0] + '\''
             daughter_node = '\'' + i[13] + '-' + i[10] + '\''
             parent_node.replace(' ','')
+            this_node = '['+parent_node+', {xpos:'+str(i[2])+', ypos:'+str(i[4])+'}],\n'
+            all_element.append(this_node)
             daughter_node.replace(' ','')
-            all_element.append(parent_node)
-            all_element.append(daughter_node)
+            this_node = '['+daughter_node+', {xpos:'+str(i[12])+', ypos:'+str(i[14])+'}],\n'
+            all_element.append(this_node)
         all_element = set(all_element)
-        writer.writerow(all_element)
+
+        if htmlwriter:
+            htmlHeader = ["layout: false\n", "title: Decay Chain Graph\n", "date:\n", "---\n", "<html>\n", \
+                      "<meta charset=\"UTF-8\" />\n", "<body>\n",\
+                      "<script src=\"https://cdn.staticfile.org/jquery/1.3.2/jquery.min.js\"></script>\n",\
+                      "<script type=\"text/javascript\" src=\"/js/springy.js\"></script>\n", \
+                     "<script type=\"text/javascript\" src=\"/js/springyui.js\"></script>\n", \
+                      "<script>\n", "var graph = new Springy.Graph();\n", "graph.addNodes(\n"]
+            f.writelines(htmlHeader)
+        f.writelines(all_element)
+        if htmlwriter:
+            htmlHeader = [");\n", "graph.addEdges(\n"]
+            f.writelines(htmlHeader)
         edges = []
         for i in ulist:
             parent_node = '\'' + i[3] + '-' + i[0] + '\''
@@ -59,10 +79,24 @@ def SaveGraph(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(
             elif 'ec' in i[8]: color = '#EDC951'
             elif 'IT' in i[8]: color = '#7DBE3C'
             else:              color = '#BE7D3C'
-            this_edge = ' [ '+parent_node+' , '+daughter_node+' ,{color: \''+color+'\', label: \'' +i[8]+ '\' }],\n'
+            this_edge = ' [ '+parent_node+' , '+daughter_node+' ,{color: \''+color+'\', label: \'' +i[8]+ '\'}],\n'
             edges.append(this_edge)
         edges = set(edges)
         f.writelines(edges)
+
+        if htmlwriter:
+            htmlHeader = [");\n","jQuery(function(){\n",\
+                      "var springy = jQuery('#springydemo').springy({\n", \
+                      "graph: graph\n",\
+                      "});\n",
+                      "});\n",
+                      "</script>\n",\
+                      "<canvas id = \"springydemo\"   width = \"1500\"  height = \"1500\" >  < /canvas >\n",\
+                      "</body>\n", " </html>\n"]
+            f.writelines(htmlHeader)
+
+
+
 
 def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
     """
@@ -153,6 +187,11 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                 if (td_index == 5) and sum([(i in td.get_text()) for i in ['α','β','IT','ec']])==0:
                     ui = []
                     breakRowLoop = True
+                # TODO: There are some mistakes in the database that wrong data is given, e.g., Po212.
+                # TODO: An accident happens when Pb-212 energy is 0.0 + X.
+                if (td_index == 3) and (float(re.findall(r'\d+\.?\d*', td.get_text())[0]) != 0):
+                    ui = []
+                    breakRowLoop = True
             else: # If the 8th element reached, break the loop
                 breakRowLoop = True
         # One row's elements are added. If blank, do not continue to add a blank list. Similarly, if 'x' in ui[8] (
@@ -186,7 +225,7 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                 ui.append(lamb*float(re.findall(r'\d+\.?\d*', ui[8])[0])/100)
                 ulist.append(ui)
     dataqueue.put(ulist)
-    print(Symbol + '_' + A + ': decay scheme has been put in the queue')
+    print(Fore.LIGHTMAGENTA_EX + Symbol +'_' + A + Style.RESET_ALL +': decay scheme has been put in the queue')
     return
 
 
@@ -210,7 +249,9 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
     PickedElements = set()
     WaitElements = AllElements - PickedElements
     while not(WaitElements == set()):
-        print(str(WaitElements) + ': parallel search for decay daughter of the selected element(s) has started')
+        print(Fore.LIGHTBLUE_EX + str(WaitElements) + Style.RESET_ALL + ': parallel search for decay daughter of the '
+                                                                        'selected '
+                                                          'element(s) has started')
         l = len(WaitElements)
         q = multiprocessing.Queue()  # queue for data 队列
         threads = []  # list for all threads 全部线程
@@ -218,7 +259,7 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
         for i in range(l):
             # There exits l threads to do this job 一共有 l 个线程来执行函数
             RandomElement = WaitElements.pop()
-            print(RandomElement + ': thread search for the element has started')
+            print(Fore.CYAN + RandomElement+ Style.RESET_ALL + ': thread search for the element has started')
             # There remains some problems with D decay which radiates H2. This daughter nucleuis does not appear in the daughter item, so bug arises.
             t = multiprocessing.Process(target=SearchDecayDaughter,
                                         args=(RandomElement.split('_')[0], RandomElement.split('_')[1], q))
@@ -238,10 +279,18 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
             AllElements = AllElements | set([i[13] + '_' + i[10] for i in AllList])
         WaitElements = AllElements - PickedElements
 
-    print(AllElements)
     SaveContents(AllList, datadir = datadir)
-    SaveGraph(AllList, datadir = datadir)
+    SaveGraph(AllList, datadir = datadir, name= "-".join(RequiredElements), htmlwriter=True)
+    print(Back.CYAN+Fore.BLACK + str(AllElements)+": have been collected in the data")
 
 
 if __name__ == '__main__':
-    IAEAspider(set(['U_235']))
+    s = requests.session()
+    s.keep_alive = False
+    requests.DEFAULT_RETRIES = 5
+    init(autoreset=True)
+    IAEAspider(set(['U_238']))
+    IAEAspider(set(['Rn_222']))
+    IAEAspider(set(['Pu_239']))
+    IAEAspider(set(['Np_237']))
+    IAEAspider(set(['Th_232']))

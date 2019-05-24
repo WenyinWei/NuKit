@@ -1,24 +1,7 @@
-#pragma once
-#include <QStringList>
+#include "csvparser.hpp"
 #include <QFile>
 #include <QTextStream>
-#include <boost/smart_ptr/shared_ptr.hpp>
-
-class CSVParser
-{
-public:
-    CSVParser(QString filePath);
-    ~CSVParser(void);
-
-public:
-    bool setCSVData(const QStringList &CSVList);
-    QStringList CSVParser::getHeader();
-    QVector<QVector<double>> CSVParser::getdDataWHead();
-    QVector<QVector<int>> CSVParser::getiDataWHead();
-
-private:
-    boost::shared_ptr<QFile> CSVFile_;
-};
+#include <QVector>
 
 CSVParser::CSVParser(QString filePath) // Initialization Function
 {
@@ -60,7 +43,7 @@ QVector<QVector<double>> CSVParser::getdDataWHead() // You can also get the data
         QVector<double> Rowdata;
         for (size_t i = 0; i < RowdataStr.size(); i++)
             Rowdata << RowdataStr[i].toDouble();
-        data2D<<Rowdata;
+        data2D << Rowdata;
     }
     return data2D;
 };
@@ -76,7 +59,7 @@ QVector<QVector<int>> CSVParser::getiDataWHead() // You can also get the data fr
         QVector<int> Rowdata;
         for (size_t i = 0; i < RowdataStr.size(); i++)
             Rowdata << RowdataStr[i].toInt();
-        data2D<<Rowdata;
+        data2D << Rowdata;
     }
     return data2D;
 };
