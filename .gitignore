@@ -9,3 +9,5 @@ qtapp/NuKit/src/lib/
 qtapp/NuKit/src/CMakeLists.txt.user
 qtapp/NuKit/src/build/
 data/
+qtapp/NuKit/lib/
+qtapp/NuKit/bin/

@@ -146,10 +146,10 @@ void GraphModifier::resetData(int time_index)
 {
     //! [5]
     // Set up data
-    static const QStringList dataHeader = CSVParser(QString("oderun.csv")).getHeader();
-    static const QVector<QVector<double>> spdata = CSVParser(QString("oderun.csv")).getdDataWHead();
-    static const QStringList elementName = CSVParser(QString("vElement.csv")).getHeader();
-    static const QVector<QVector<int>> elementNums = CSVParser(QString("vElement.csv")).getiDataWHead();
+    static const QStringList dataHeader = CSVParser(QString("../data/oderun.csv")).getHeader();
+    static const QVector<QVector<double>> spdata = CSVParser(QString("../data/oderun.csv")).getdDataWHead();
+    static const QStringList elementName = CSVParser(QString("../data/vElement.csv")).getHeader();
+    static const QVector<QVector<int>> elementNums = CSVParser(QString("../data/vElement.csv")).getiDataWHead();
     m_Znum = elementNums[1];
     int min_Znum = m_Znum[0], max_Znum = m_Znum[0];
     m_Nnum = elementNums[2];
@@ -165,8 +165,8 @@ void GraphModifier::resetData(int time_index)
             min_Nnum = m_Nnum[i];
         if (max_Nnum < m_Nnum[i])
             max_Nnum = m_Nnum[i];
-        if (max_density < spdata[time_index][i])
-            max_density = spdata[time_index][i];
+        if (max_density < spdata[time_index][i+2])
+            max_density = spdata[time_index][i+2];
     }
 
     int Zlen = max_Znum - min_Znum + 1;
@@ -199,7 +199,7 @@ void GraphModifier::resetData(int time_index)
         int reducedZ = m_Znum[i] - min_Znum;
         int reducedN = m_Nnum[i] - min_Nnum;
         dataRow = dataSet->at(reducedZ);
-        (*dataRow)[reducedN].setValue(spdata[time_index][i]);
+        (*dataRow)[reducedN].setValue(spdata[time_index][i+2]);
     }
 
     // Add data to the data proxy (the data proxy assumes ownership of it)

@@ -93,7 +93,7 @@ struct write_csv
 	}
 };
 
-void write_element_list(std::vector<Element> vElement, std::string filename = "vElement.csv")
+void write_element_list(std::vector<Element> vElement, std::string filename = "../data/vElement.csv")
 {
 	std::ofstream fout(filename.c_str(), std::ofstream::out);
 	for (size_t i = 0; i < vElement.size()-1; ++i)
