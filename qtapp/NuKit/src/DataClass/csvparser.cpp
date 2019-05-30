@@ -41,7 +41,7 @@ QVector<QVector<double>> CSVParser::getdDataWHead() // You can also get the data
     {
         QStringList RowdataStr = stream.readLine().split(",");
         QVector<double> Rowdata;
-        for (size_t i = 0; i < RowdataStr.size(); i++)
+        for (int i = 0; i < RowdataStr.size(); i++)
             Rowdata << RowdataStr[i].toDouble();
         data2D << Rowdata;
     }
@@ -57,7 +57,7 @@ QVector<QVector<int>> CSVParser::getiDataWHead() // You can also get the data fr
     {
         QStringList RowdataStr = stream.readLine().split(",");
         QVector<int> Rowdata;
-        for (size_t i = 0; i < RowdataStr.size(); i++)
+        for (int i = 0; i < RowdataStr.size(); i++)
             Rowdata << RowdataStr[i].toInt();
         data2D << Rowdata;
     }

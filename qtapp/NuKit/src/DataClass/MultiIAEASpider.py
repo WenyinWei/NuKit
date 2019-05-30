@@ -101,7 +101,7 @@ def SaveGraph(ulist, datadir = os.path.dirname(os.path.dirname(os.path.realpath(
 
 
 
-def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
+def SearchDecayDaughter(Symbol:str, A:str, dataqueue, colorful=True):
     """
     This function search for data of the element: Symabol_A in IAEA online database and put the first several columns
     of the website table as a result of search. It will eventually be put in the dataqueue to be loaded outside of
@@ -225,14 +225,22 @@ def SearchDecayDaughter(Symbol:str, A:str, dataqueue):
                     lamb = 0.69314718055995/halfT*timescale
 
                 ui.append(lamb)
-                ui.append(lamb*float(re.findall(r'\d+\.?\d*', ui[8])[0])/100)
+                # Eu_151 has problem "\alpha ? %", no idea how to handle it, set it 0 temporally
+                try:
+                    ui.append(lamb*float(re.findall(r'\d+\.?\d*', ui[8])[0])/100)
+                except:
+                    ui.append(0)
                 ulist.append(ui)
     dataqueue.put(ulist)
-    print(Fore.LIGHTMAGENTA_EX + Symbol +'_' + A + Style.RESET_ALL +': decay scheme has been put in the queue')
+    if colorful:
+        print(Fore.LIGHTMAGENTA_EX + Symbol +'_' + A + Style.RESET_ALL +': decay scheme has been put in the queue')
+    else:
+        print(Symbol +'_' + A +': decay scheme has been put in the queue')
     return
 
 
-def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data'):
+def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/data',
+               colorful=True):
     """
     The main function to collect decay graph data of Required Elements
 
@@ -252,9 +260,10 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
     PickedElements = set()
     WaitElements = AllElements - PickedElements
     while not(WaitElements == set()):
-        print(Fore.LIGHTBLUE_EX + str(WaitElements) + Style.RESET_ALL + ': parallel search for decay daughter of the '
-                                                                        'selected '
-                                                          'element(s) has started')
+        if colorful:
+            print(Fore.LIGHTBLUE_EX + str(WaitElements) + Style.RESET_ALL + ': parallel search for decay daughter of the element(s) has started')
+        else:
+            print(str(WaitElements) + ': parallel search for decay daughter of the selected element(s) has started')
         l = len(WaitElements)
         q = multiprocessing.Queue()  # queue for data 队列
         threads = []  # list for all threads 全部线程
@@ -262,10 +271,13 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
         for i in range(l):
             # There exits l threads to do this job 一共有 l 个线程来执行函数
             RandomElement = WaitElements.pop()
-            print(Fore.CYAN + RandomElement+ Style.RESET_ALL + ': thread search for the element has started')
+            if colorful:
+                print(Fore.CYAN + RandomElement+ Style.RESET_ALL + ': thread search for the element has started')
+            else:
+                print(RandomElement + ': thread search for the element has started')
             # There remains some problems with D decay which radiates H2. This daughter nucleuis does not appear in the daughter item, so bug arises.
             t = multiprocessing.Process(target=SearchDecayDaughter,
-                                        args=(RandomElement.split('_')[0], RandomElement.split('_')[1], q))
+                                        args=(RandomElement.split('_')[0], RandomElement.split('_')[1], q, colorful))
             t.start()
             threads.append(t)  # Add the current thread to the [threads] list 当前线程加入全部线程中
 
@@ -284,14 +296,18 @@ def IAEAspider(RequiredElements:set, datadir = os.path.dirname(os.path.dirname(o
 
     SaveContents(AllList, datadir = datadir)
     # SaveGraph(AllList, datadir = datadir, name= "-".join(RequiredElements), htmlwriter=True)
-    print(Back.CYAN+Fore.BLACK + str(AllElements)+": have been collected in the data")
+    if colorful:
+        print(Back.CYAN+Fore.BLACK + str(AllElements)+": have been collected in the data")
+    else:
+        print(str(AllElements)+": have been collected in the data")
 
 
 if __name__ == '__main__':
     s = requests.session()
     s.keep_alive = False
     requests.DEFAULT_RETRIES = 5
-    init(autoreset=True)
+    # init(autoreset=True)
     InputElements = eval(sys.argv[1])
-    IAEAspider(InputElements, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))+'/data')
+    IAEAspider(InputElements, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))+'/data',
+               colorful=False)
     # IAEAspider(set(['U_238']))

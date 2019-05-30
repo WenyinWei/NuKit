@@ -3,6 +3,8 @@
 
 #include "qtbarwindow.h"
 #include <QMainWindow>
+#include <QProcess>
+
 namespace Ui
 {
 class MainWindow;
@@ -22,6 +24,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QVector<QPointer<QtBarWindow>> bar_window_list;
+    QProcess* m_process;
 };
 
 #endif // MAINWINDOW_H
