@@ -16,6 +16,8 @@ class MainWindow : public QMainWindow
 
 public Q_SLOTS:
     void on_simulateButton_clicked();
+    void visualize_data();
+    void on_visualizeButton_clicked();
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);

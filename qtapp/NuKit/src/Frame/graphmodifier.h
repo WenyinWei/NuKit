@@ -62,7 +62,7 @@ public:
     explicit GraphModifier(Q3DBars *bargraph);
     ~GraphModifier();
 
-    void resetData(int);
+    void resetData();
     void changePresetCamera();
     void changeLabelBackground();
     void changeFont(const QFont &font);
@@ -75,6 +75,7 @@ public:
     void setSeriesVisibility(int enabled);
     void setReverseValueAxis(int enabled);
     void setReflection(bool enabled);
+    void findElementsRange();
 
 public Q_SLOTS:
     void changeTime(int time_index);
@@ -96,10 +97,15 @@ Q_SIGNALS:
     void fontSizeChanged(int size);
 
 public:
+    // These variables are set public temporally to facilitate debugging,
+    // they may be set private for safe code in the future
     QVector<int> m_Nnum;
     QVector<int> m_Znum;
     float m_minval;
     float m_maxval;
+    int m_minZnum, m_maxZnum;
+    int m_minNnum, m_maxNnum;
+    int m_timeRow;
 
 private:
     Q3DBars *m_graph;

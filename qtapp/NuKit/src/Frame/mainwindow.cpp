@@ -145,7 +145,6 @@ private:
         for (size_t i = 1; i < DecaystrArray.size(); i++)
         { // Fill the transition matrix with reaction constant or crossection
             // Attention, this one is for decay reaction
-            qDebug() << "Now it is : " << i;
             Element ele1(DecaystrArray[i][3], stoi(DecaystrArray[i][1]), stoi(DecaystrArray[i][2]));
             Element ele2(DecaystrArray[i][13], stoi(DecaystrArray[i][11]), stoi(DecaystrArray[i][12]));
             size_t index1, index2;
@@ -169,7 +168,6 @@ private:
         for (size_t i = 1; i < NeutronstrArray.size(); i++)
         { // Fill the transition matrix with reaction constant or crossection
             // Attention, this one is for decay reaction
-            qDebug() << "Now it is : " << i;
             Element ele1(NeutronstrArray[i][3], stoi(NeutronstrArray[i][1]), stoi(NeutronstrArray[i][2]));
             Element ele2(NeutronstrArray[i][13], stoi(NeutronstrArray[i][11]), stoi(NeutronstrArray[i][12]));
             size_t index1, index2;
@@ -192,11 +190,11 @@ private:
 
         for (size_t i=0; i< th_elements.size(); i++)
         {
-            qDebug() << "This is the element"<< th_elements[i];
+//            qDebug() << "This is the element"<< th_elements[i];
             for (size_t j = 0; j < vElement.size(); j++)
                 if (th_elements[i] == QString::fromStdString(vElement[j].outname()))
                 {
-                    qDebug() << QString::fromStdString(vElement[j].outname());
+//                    qDebug() << QString::fromStdString(vElement[j].outname());
                     x(j) = th_elementsDensity[i];
                     break;
                 };
@@ -220,37 +218,27 @@ private:
             sumofElements += x[i];
         }
 
-        for (double t=0; t<10;t++)
-        {
-//            double NeutronN = expression.evaluate(n_flux_text.repeated(1).replace("T", QString::number(t))).toNumber();
 
-//            stiff.iNeutronN = NeutronN;
-//            stiffj.iNeutronN = NeutronN;
-            qDebug() << "This is time : " << t;
-            size_t num_of_steps = boost::numeric::odeint::integrate_const(boost::numeric::odeint::make_dense_output<boost::numeric::odeint::rosenbrock4<double>>(1.0e-6, 1.0e-6),
-                                                                          std::make_pair(stiff, stiffj),
-                                                                          x, t, t+1, 0.0010, boost::ref(obs));
-            double tempsum = 0;
-            for (size_t i=0;i<x.size();i++)
-            {
-                tempsum += x[i];
-            }
-            qDebug()<<tempsum;
-            Q_ASSERT(abs(tempsum-sumofElements) <sumofElements*0.05);
-        }
+        size_t num_of_steps = boost::numeric::odeint::integrate_const(boost::numeric::odeint::make_dense_output<boost::numeric::odeint::rosenbrock4<double>>(1.0e-6, 1.0e-6),
+                                                                      std::make_pair(stiff, stiffj),
+                                                                      x, 0.0, th_time, th_timestep, boost::ref(obs));
+
 
         //]
 
-//        qDebug() << num_of_steps << endl;
+        qDebug() << num_of_steps << endl;
     }
 private:
     QString n_flux_text;
     QStringList th_elements;
     QVector<double> th_elementsDensity;
+    double th_time, th_timestep;
 
 public:
-    thread_calReact(QString n_flux_text, QStringList Elements, QVector<double> ElementsDensity) :
+    thread_calReact(QString n_flux_text, double inputTime, double inputTimeStep, QStringList Elements, QVector<double> ElementsDensity) :
         n_flux_text(n_flux_text),
+        th_time(inputTime),
+        th_timestep(inputTimeStep),
         th_elements(Elements),
         th_elementsDensity(ElementsDensity)
     {
@@ -288,6 +276,7 @@ void MainWindow::on_simulateButton_clicked()
     QVector<QStringList> text_table;
     QStringList Elements, ElementDensities;
     QVector<double> ElementsDensity;
+    qDebug() << "Everything works well now";
     for (int i = 0; i < text_list.size(); i++)
     {
         QStringList tmp = text_list[i].split(" ");
@@ -298,12 +287,16 @@ void MainWindow::on_simulateButton_clicked()
     };
     //TODO: Acquire the user-input neutron flux
     QString n_flux_text = this->ui->inputNeutron->text();
+    qDebug() << "Everything works well now 2 ";
 
 
     //TODO: Calculate the transition matrix
     //Routine: Recycle to find any new elements appear in the reactor
-
-    thread_calReact *calReact_thread = new thread_calReact(n_flux_text, Elements, ElementsDensity);
+// Uncomment the following commands after debug
+    thread_calReact *calReact_thread = new thread_calReact(n_flux_text,
+                                                           this->ui->inputTime->text().toDouble(),
+                                                           this->ui->inputTimeStep->text().toDouble(),
+                                                           Elements, ElementsDensity);
     calReact_thread->start();
     //TODO: Transition: 1. Decay Part
 
@@ -314,12 +307,23 @@ void MainWindow::on_simulateButton_clicked()
     //    connect(getDecayInfo_thread, SIGNAL(finished()), getNeutronInfo_thread, SLOT(start()));
     //    connect(getNeutronInfo_thread, SIGNAL(finished()), organizeReact_thread, SLOT(start()));
     //    connect(organizeReact_thread, SIGNAL(finished()), calReact_thread, SLOT(start()));
-    //    connect(getDecayInfo_thread, SIGNAL(finished()), calReact_thread, SLOT(start()));
+
+    connect(calReact_thread, SIGNAL(finished()), this, SLOT(visualize_data()));
 
     //If there is new elements added, the loop continue, else break.
     //Repeat until no new elements is added.
     //TODO: set the matrix from the reaction csv files and set the initial conditions for ode
     //TODO: calculate the ode
-    //    bar_window_list.push_back(new QtBarWindow(this));
-    //    bar_window_list.back()->show();
+
+}
+
+void MainWindow::on_visualizeButton_clicked()
+{
+    visualize_data();
+}
+
+void MainWindow::visualize_data()
+{
+    bar_window_list.push_back(new QtBarWindow(this));
+    bar_window_list.back()->show();
 }

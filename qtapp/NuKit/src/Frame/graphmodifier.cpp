@@ -28,7 +28,7 @@
 ****************************************************************************/
 
 #include "graphmodifier.h"
-
+//#include <algorithm> //std::min_element, std::max_element
 using namespace QtDataVisualization;
 
 const QString celsiusString = QString(QChar(0xB0)) + "C";
@@ -43,6 +43,7 @@ GraphModifier::GraphModifier(Q3DBars *bargraph)
       m_subSegments(3),
       m_minval(-20.0f),
       m_maxval(20.0f),
+      m_timeRow(0),
       //! [1]
       m_densityAxis(new QValue3DAxis),
       m_ZAxis(new QCategory3DAxis),
@@ -99,7 +100,8 @@ GraphModifier::GraphModifier(Q3DBars *bargraph)
     //! [6]
 
     //! [9]
-    resetData(0);
+    findElementsRange();
+    resetData();
     //! [9]
 
     // Set up property animations for zooming to the selected bar
@@ -142,7 +144,33 @@ GraphModifier::~GraphModifier()
     delete m_graph;
 }
 
-void GraphModifier::resetData(int time_index)
+void GraphModifier::findElementsRange()
+{
+    const QStringList elementName = CSVParser(QString("../data/vElement.csv")).getHeader();
+    const QVector<QVector<int>> elementNums = CSVParser(QString("../data/vElement.csv")).getiDataWHead();
+    m_Znum = elementNums[1];
+    m_maxZnum = m_Znum[0]; m_minZnum = m_Znum[0];
+    m_Nnum = elementNums[2];
+    m_maxNnum = m_Nnum[0]; m_minNnum = m_Nnum[0];
+//    m_maxZnum = *std::max_element(&m_Znum[0], &m_Znum[-1]);
+//    m_minZnum = *std::min_element(&m_Znum[0], &m_Znum[-1]);
+//    m_maxNnum = *std::max_element(&m_Nnum[0], &m_Nnum[-1]);
+//    m_minNnum = *std::min_element(&m_Nnum[0], &m_Nnum[-1]);
+//    qDebug() << "Is it right?" << m_maxNnum;
+    for (int i = 0; i < m_Znum.size()-1; i++)
+    {
+        if (m_minZnum > m_Znum[i])
+            m_minZnum = m_Znum[i];
+        if (m_maxZnum < m_Znum[i])
+            m_maxZnum = m_Znum[i];
+        if (m_minNnum > m_Nnum[i])
+            m_minNnum = m_Nnum[i];
+        if (m_maxNnum < m_Nnum[i])
+            m_maxNnum = m_Nnum[i];
+    }
+}
+
+void GraphModifier::resetData()
 {
     //! [5]
     // Set up data
@@ -150,27 +178,13 @@ void GraphModifier::resetData(int time_index)
     static const QVector<QVector<double>> spdata = CSVParser(QString("../data/oderun.csv")).getdDataWHead();
     static const QStringList elementName = CSVParser(QString("../data/vElement.csv")).getHeader();
     static const QVector<QVector<int>> elementNums = CSVParser(QString("../data/vElement.csv")).getiDataWHead();
-    m_Znum = elementNums[1];
-    int min_Znum = m_Znum[0], max_Znum = m_Znum[0];
-    m_Nnum = elementNums[2];
-    int min_Nnum = m_Nnum[0], max_Nnum = m_Nnum[0];
-    double max_density = 0;
-    for (int i = 0; i < m_Znum.size(); i++)
-    {
-        if (min_Znum > m_Znum[i])
-            min_Znum = m_Znum[i];
-        if (max_Znum < m_Znum[i])
-            max_Znum = m_Znum[i];
-        if (min_Nnum > m_Nnum[i])
-            min_Nnum = m_Nnum[i];
-        if (max_Nnum < m_Nnum[i])
-            max_Nnum = m_Nnum[i];
-        if (max_density < spdata[time_index][i+2])
-            max_density = spdata[time_index][i+2];
-    }
 
-    int Zlen = max_Znum - min_Znum + 1;
-    int Nlen = max_Nnum - min_Nnum + 1;
+    double max_density = 0, sum_density = 0;
+    qDebug() << "I am resetting the data.";
+
+    int Zlen = m_maxZnum - m_minZnum + 1;
+    int Nlen = m_maxNnum - m_minNnum + 1;
+    qDebug() << "I am resetting the data. 2 ";
 
     // Create data arrays
     QBarDataArray *dataSet = new QBarDataArray;
@@ -178,9 +192,9 @@ void GraphModifier::resetData(int time_index)
 
     QStringList Zrange, Nrange;
     for (int i = 0; i < Zlen; i++)
-        Zrange << QString::number(i + min_Znum);
+        Zrange << QString::number(i + m_minZnum);
     for (int i = 0; i < Nlen; i++)
-        Nrange << QString::number(i + min_Nnum);
+        Nrange << QString::number(i + m_minNnum);
 
     dataSet->reserve(Zlen);
     for (int Z = 0; Z < Zlen; Z++)
@@ -193,25 +207,38 @@ void GraphModifier::resetData(int time_index)
         // Add the row to the set
         dataSet->append(dataRow);
     };
-
-    for (int i = 0; i < m_Znum.size(); i++)
+    qDebug() << "This is time_index" << m_timeRow;
+    for (int i = 0; i < m_Znum.size()-1; i++)
     {
-        int reducedZ = m_Znum[i] - min_Znum;
-        int reducedN = m_Nnum[i] - min_Nnum;
-        dataRow = dataSet->at(reducedZ);
-        (*dataRow)[reducedN].setValue(spdata[time_index][i+2]);
+        if ((m_minZnum <= m_Znum[i]) && (m_maxZnum >= m_Znum[i]))
+        {
+            if ((m_minNnum <= m_Nnum[i]) && (m_maxNnum >= m_Nnum[i]))
+            {
+                if (max_density < spdata[m_timeRow][i+2])
+                    max_density = spdata[m_timeRow][i+2];
+                sum_density += spdata[m_timeRow][i+2];
+
+                int reducedZ = m_Znum[i] - m_minZnum;
+                int reducedN = m_Nnum[i] - m_minNnum;
+                dataRow = dataSet->at(reducedZ);
+                (*dataRow)[reducedN].setValue(spdata[m_timeRow][i+2]);
+            }
+        }
     }
 
     // Add data to the data proxy (the data proxy assumes ownership of it)
     m_primarySeries->dataProxy()->resetArray(dataSet, Zrange, Nrange);
-    m_densityAxis->setRange(0, max_density);
+    m_densityAxis->setRange(0, sum_density);
     //! [5]
 }
 
 void GraphModifier::changeTime(int time_index)
 {
-    resetData(time_index);
+    m_timeRow = time_index;
+    resetData();
 }
+
+
 
 void GraphModifier::changeStyle(int style)
 {

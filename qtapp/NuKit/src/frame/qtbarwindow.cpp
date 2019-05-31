@@ -1,5 +1,31 @@
 #include "qtbarwindow.h"
 
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <QLineEdit>
+int getNumberOfEdges()
+{
+    std::ifstream  readFile("../data/oderun.csv");
+    int line=0;
+    std::string str,word;
+
+    while (!readFile.eof())
+    //while(getline(readFile,str))
+    {
+        getline(readFile,str);
+        remove(str.begin(),str.end(),' ');//不考虑每行的空格 制表符  \n
+        remove(str.begin(), str.end(), '\t');
+        if (str==""||(str[0]=='/'))
+        {
+            continue;
+        }
+
+            ++line;
+    }
+    return line;
+}
+
 QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
 {
     setWindowTitle(QStringLiteral("Point Model Element Density Evolution"));
@@ -42,6 +68,11 @@ QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
     QCheckBox *axisTitlesVisibleCB = new QCheckBox(this);
     QSlider *axisLabelRotationSlider = new QSlider(Qt::Horizontal, this);
     QSlider *timeSlider = new QSlider(Qt::Horizontal, this);
+    QLineEdit *minZInput = new QLineEdit("51",this);
+    QLineEdit *maxZInput = new QLineEdit("62",this);
+    QLineEdit *minNInput = new QLineEdit("78",this);
+    QLineEdit *maxNInput = new QLineEdit("88",this);
+    qDebug() << "It works well building new qt bar after new QLineEdit.";
 
     themeList->addItem(QStringLiteral("Qt"));
     themeList->addItem(QStringLiteral("Primary Colors"));
@@ -134,7 +165,7 @@ QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
     timeSlider->setTickPosition(QSlider::TicksBelow);
     timeSlider->setMinimum(0);
     timeSlider->setValue(0);
-    timeSlider->setMaximum(400);
+    timeSlider->setMaximum(getNumberOfEdges()-2);
 
     vLayout->addWidget(labelButton, 0, Qt::AlignTop);
     vLayout->addWidget(zoomToSelectedButton, 0, Qt::AlignTop);
@@ -158,6 +189,15 @@ QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
     vLayout->addWidget(axisLabelRotationSlider, 1, Qt::AlignTop);
     vLayout->addWidget(new QLabel(QStringLiteral("Adjust time point")));
     vLayout->addWidget(timeSlider);
+    vLayout->addWidget(new QLabel(QStringLiteral("Z min")));
+    vLayout->addWidget(minZInput);
+    vLayout->addWidget(new QLabel(QStringLiteral("Z max")));
+    vLayout->addWidget(maxZInput);
+    vLayout->addWidget(new QLabel(QStringLiteral("N min")));
+    vLayout->addWidget(minNInput);
+    vLayout->addWidget(new QLabel(QStringLiteral("N max")));
+    vLayout->addWidget(maxNInput);
+    qDebug() << "It finishes new qt bar before connect.";
 
     QObject::connect(labelButton, &QPushButton::clicked, modifier,
                      &GraphModifier::changeLabelBackground);
@@ -210,4 +250,8 @@ QtBarWindow::QtBarWindow(QWidget *parent) : QWidget(parent, Qt::Window)
 
     QObject::connect(timeSlider, &QSlider::valueChanged, modifier,
                      &GraphModifier::changeTime);
+    QObject::connect(minZInput, &QLineEdit::editingFinished, [=]{modifier->m_minZnum = minZInput->text().toInt(); modifier->resetData();});
+    QObject::connect(maxZInput, &QLineEdit::editingFinished, [=]{modifier->m_maxZnum = maxZInput->text().toInt(); modifier->resetData();});
+    QObject::connect(minNInput, &QLineEdit::editingFinished, [=]{modifier->m_minNnum = minNInput->text().toInt(); modifier->resetData();});
+    QObject::connect(maxNInput, &QLineEdit::editingFinished, [=]{modifier->m_maxNnum = maxNInput->text().toInt(); modifier->resetData();});
 };

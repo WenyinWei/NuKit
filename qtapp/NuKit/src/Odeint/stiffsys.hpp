@@ -15,7 +15,7 @@ struct stiff_system
     void operator()(const vector_type &x, vector_type &dxdt, double  t )
 	{
         QScriptEngine expression;
-        iNeutronN = expression.evaluate(iNeutronText.repeated(1).replace("T", QString::number(t))).toNumber()/pow(10,11);
+        iNeutronN = expression.evaluate(iNeutronText.repeated(1).replace("T", QString::number(t))).toNumber()*3600/pow(10,11);
 
 		for (size_t i = 0; i < dxdt.size(); i++)
 		{
@@ -35,7 +35,7 @@ struct stiff_system_jacobi
     void operator()(const vector_type & /* x */, matrix_type &J, const double & t , vector_type &dfdt)
     {
         QScriptEngine expression;
-        iNeutronN = expression.evaluate(iNeutronText.repeated(1).replace("T", QString::number(t))).toNumber()/pow(10,11);
+        iNeutronN = expression.evaluate(iNeutronText.repeated(1).replace("T", QString::number(t))).toNumber()*3600/pow(10,11);
         J = iDecayJ + iNeutronJ * iNeutronN;
 		for (size_t i = 0; i < dfdt.size(); i++)
 		{
