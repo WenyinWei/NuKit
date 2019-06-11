@@ -5,4 +5,4 @@ QT5_WRAP_UI(MAINWINDOW_UI_HDRS   mainwindow.ui)
 ADD_LIBRARY(Frame ${LIST_FRAME_LIB} ${MAINWINDOW_UI_HDRS})
 TARGET_LINK_LIBRARIES(Frame Qt5::DataVisualization)
 TARGET_LINK_LIBRARIES(Frame Qt5::Widgets )
-TARGET_LINK_LIBRARIES(Frame Qt5::Script) # For ScriptEngine in mainwindow.hpp
+

@@ -307,7 +307,8 @@ if __name__ == '__main__':
     s.keep_alive = False
     requests.DEFAULT_RETRIES = 5
     # init(autoreset=True)
-    InputElements = eval(sys.argv[1])
+    # InputElements = eval(sys.argv[1])
+    InputElements = set(['Mn_55','Mn_56'])
     IAEAspider(InputElements, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))+'/data',
                colorful=False)
     # IAEAspider(set(['U_238']))

@@ -7,6 +7,10 @@
 #include <fstream>
 #include <boost/phoenix/core.hpp>
 #include "element.hpp"
+
+#include <QString>
+#include <QtScript/QScriptEngine> // For input the neutron flux
+
 typedef boost::numeric::ublas::vector<double> vector_type;
 
 struct write_on_terminal
@@ -67,45 +71,39 @@ private:
 struct write_csv
 {
 	size_t m_every, m_count;
-	std::string m_filename;
 	std::vector<Element> m_vElement;
-	write_csv(std::vector<Element> vElement, size_t every = 1, std::string filename = "oderun.csv")
-		: m_every(every), m_count(0), m_filename(filename), m_vElement(vElement)
+	std::string m_odeFile = "../data/oderun.csv";
+	std::string m_neutronFile = "../data/t_neutron.csv";
+	double iNeutronN;
+	QString iNeutronText;
+
+	write_csv(std::vector<Element> vElement, QString NeutronText, size_t every = 1)
+		: m_every(every), m_count(0), m_vElement(vElement), iNeutronText(NeutronText)
 	{
-		std::ofstream fout(m_filename.c_str(), std::ofstream::out);
-		fout << "iter_index,time";
+		std::ofstream odefout(m_odeFile.c_str(), std::ofstream::out);
+		std::ofstream nfout(m_neutronFile.c_str(), std::ofstream::out);
+		odefout << "iter_index,time";
 		for (size_t i = 0; i < m_vElement.size(); ++i)
-			fout << "," << m_vElement[i].outname();
-		fout << std::endl;
+			odefout << "," << m_vElement[i].outname();
+		odefout << std::endl;
+		nfout << "time,n_1" << std::endl;
 	}
 
 	void operator()(const vector_type &x, double t)
 	{
 		if ((m_count % m_every) == 0)
 		{
-			std::ofstream fout(m_filename.c_str(), std::ofstream::app);
-			fout << m_count << "," << t;
+			std::ofstream odefout(m_odeFile.c_str(), std::ofstream::app);
+			std::ofstream nfout(m_neutronFile.c_str(), std::ofstream::app);
+			odefout << m_count << "," << t;
 			for (size_t i = 0; i < x.size(); ++i)
-				fout << "," << x(i);
-			fout << std::endl;
+				odefout << "," << x(i);
+			odefout << std::endl;
+
+			QScriptEngine expression;
+			iNeutronN = expression.evaluate(iNeutronText.repeated(1).replace("T", QString::number(t))).toNumber();
+			nfout << t << "," << iNeutronN << std::endl;
 		}
 		++m_count;
 	}
-};
-
-void write_element_list(std::vector<Element> vElement, std::string filename = "../data/vElement.csv")
-{
-	std::ofstream fout(filename.c_str(), std::ofstream::out);
-	for (size_t i = 0; i < vElement.size()-1; ++i)
-		fout << vElement[i].getname()<<",";
-	fout << vElement[vElement.size() - 1].getname() << std::endl;
-	for (size_t i = 0; i < vElement.size() - 1; ++i)
-		fout << vElement[i].getAnum() << ",";
-	fout << vElement[vElement.size() - 1].getAnum() << std::endl;
-	for (size_t i = 0; i < vElement.size() - 1; ++i)
-		fout << vElement[i].getZnum() << ",";
-	fout << vElement[vElement.size() - 1].getZnum() << std::endl;
-	for (size_t i = 0; i < vElement.size() - 1; ++i)
-		fout << vElement[i].getNnum() << ",";
-	fout << vElement[vElement.size() - 1].getNnum() << std::endl;
 };

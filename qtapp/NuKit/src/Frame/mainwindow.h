@@ -18,6 +18,7 @@ public Q_SLOTS:
     void on_simulateButton_clicked();
     void visualize_data();
     void on_visualizeButton_clicked();
+    void set_progress(double);
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);

@@ -28,7 +28,7 @@
 ****************************************************************************/
 
 #include "graphmodifier.h"
-//#include <algorithm> //std::min_element, std::max_element
+#include <algorithm> //std::min_element, std::max_element
 using namespace QtDataVisualization;
 
 const QString celsiusString = QString(QChar(0xB0)) + "C";
@@ -152,22 +152,12 @@ void GraphModifier::findElementsRange()
     m_maxZnum = m_Znum[0]; m_minZnum = m_Znum[0];
     m_Nnum = elementNums[2];
     m_maxNnum = m_Nnum[0]; m_minNnum = m_Nnum[0];
-//    m_maxZnum = *std::max_element(&m_Znum[0], &m_Znum[-1]);
-//    m_minZnum = *std::min_element(&m_Znum[0], &m_Znum[-1]);
-//    m_maxNnum = *std::max_element(&m_Nnum[0], &m_Nnum[-1]);
-//    m_minNnum = *std::min_element(&m_Nnum[0], &m_Nnum[-1]);
-//    qDebug() << "Is it right?" << m_maxNnum;
-    for (int i = 0; i < m_Znum.size()-1; i++)
-    {
-        if (m_minZnum > m_Znum[i])
-            m_minZnum = m_Znum[i];
-        if (m_maxZnum < m_Znum[i])
-            m_maxZnum = m_Znum[i];
-        if (m_minNnum > m_Nnum[i])
-            m_minNnum = m_Nnum[i];
-        if (m_maxNnum < m_Nnum[i])
-            m_maxNnum = m_Nnum[i];
-    }
+    qDebug() << "Work?" << 1;
+    m_maxZnum = *std::max_element(m_Znum.constBegin(), m_Znum.constEnd()-1);
+    m_minZnum = *std::min_element(m_Znum.constBegin(), m_Znum.constEnd()-1);
+    m_maxNnum = *std::max_element(m_Nnum.constBegin(), m_Nnum.constEnd()-1);
+    m_minNnum = *std::min_element(m_Nnum.constBegin(), m_Nnum.constEnd()-1);
+    qDebug() << "Is it right?" << m_maxNnum;
 }
 
 void GraphModifier::resetData()

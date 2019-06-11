@@ -1,0 +1,4 @@
+AUX_SOURCE_DIRECTORY(. LIST_THREAD_LIB)
+ADD_LIBRARY(Thread ${LIST_THREAD_LIB})
+TARGET_LINK_LIBRARIES(Thread Qt5::Widgets )
+TARGET_LINK_LIBRARIES(Thread Qt5::Script) # For ScriptEngine in mainwindow.hpp

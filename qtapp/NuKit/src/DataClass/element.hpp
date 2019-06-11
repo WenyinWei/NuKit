@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <fstream>
 
 class Element;
 
@@ -87,9 +88,21 @@ public: // overload comparative operator
 	{
 		return (*this).Nnum;
 	};
+	static bool sort_element(const Element &s1, const Element &s2) { return s1 < s2; };
+	static void write_element_list(std::vector<Element> vElement, std::string filename = "../data/vElement.csv")
+	{
+		std::ofstream fout(filename.c_str(), std::ofstream::out);
+		for (size_t i = 0; i < vElement.size() - 1; ++i)
+			fout << vElement[i].getname() << ",";
+		fout << vElement[vElement.size() - 1].getname() << std::endl;
+		for (size_t i = 0; i < vElement.size() - 1; ++i)
+			fout << vElement[i].getAnum() << ",";
+		fout << vElement[vElement.size() - 1].getAnum() << std::endl;
+		for (size_t i = 0; i < vElement.size() - 1; ++i)
+			fout << vElement[i].getZnum() << ",";
+		fout << vElement[vElement.size() - 1].getZnum() << std::endl;
+		for (size_t i = 0; i < vElement.size() - 1; ++i)
+			fout << vElement[i].getNnum() << ",";
+		fout << vElement[vElement.size() - 1].getNnum() << std::endl;
+	};
 };
-
-bool sort_element(const Element &s1, const Element &s2)
-{
-	return s1 < s2;
-}
